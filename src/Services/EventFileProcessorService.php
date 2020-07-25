@@ -9,8 +9,10 @@ use App\Entity\EventDetails;
 use App\Repository\EmployeeRepository;
 use App\Repository\EventDetailsRepository;
 use App\Repository\EventRepository;
+use DateTime;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 
 /**
  * Class EventFileProcessorService
@@ -48,11 +50,10 @@ class EventFileProcessorService
     /**
      * @param array $eventsData
      *
-     * @return EventDetails
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function processEventData(array $eventsData): EventDetails
+    public function processEventData(array $eventsData)
     {
         foreach ($eventsData as $eventData) {
             $employee = $this->getOrCreateEmployee($eventData);
@@ -69,18 +70,21 @@ class EventFileProcessorService
      * @return EventDetails
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws Exception
      */
     private function addEventDetailsIfNotExist(
         Employee $employee,
         Event $event,
         array $eventData
     ): EventDetails {
+        $eventDate = new DateTime($eventData[EventConstant::EVENT_DATE]);
+
         $eventDetails = $this->eventDetailsRepository->findOneBy(
             [
                 'employee' => $employee,
                 'event'    => $event,
                 'fee'      => $eventData[EventConstant::FEE],
-                'date'     => $eventData[EventConstant::EVENT_DATE],
+                'date'     => $eventDate,
             ]
         );
         if ($eventDetails !== null && $eventDetails instanceof EventDetails) {
@@ -90,7 +94,7 @@ class EventFileProcessorService
         $eventDetails->setEmployee($employee);
         $eventDetails->setEvent($event);
         $eventDetails->setFee($eventData[EventConstant::FEE]);
-        $eventDetails->setDate($eventData[EventConstant::EVENT_DATE]);
+        $eventDetails->setDate($eventDate);
         $this->eventDetailsRepository->save($eventDetails);
 
         return $eventDetails;

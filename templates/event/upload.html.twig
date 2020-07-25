@@ -3,6 +3,11 @@
 {% block title %}Upload Events{% endblock %}
 
 {% block body %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="form-group" style="width: 40%; margin: 0 auto;">
         {{ form_start(form) }}
         {{ form_widget(form.eventsFile, { 'attr': {'class': 'form-control'} }) }}

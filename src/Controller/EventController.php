@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Form\EventFileType;
+use App\Repository\EventDetailsRepository;
+use App\Services\EventFileProcessorService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,12 +25,14 @@ class EventController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @Route("/upload", name="upload_events")
+     * @param Request                   $request
+     * @param EventFileProcessorService $eventFileProcessorService
      *
      * @return Response
+     * @Route("/upload", name="upload_events")
+     *
      */
-    public function uploadEventFileAction(Request $request)
+    public function uploadEventFileAction(Request $request, EventFileProcessorService $eventFileProcessorService)
     {
         $form = $this->createForm(
             EventFileType::class,
@@ -40,12 +45,17 @@ class EventController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var File $file */
-            $file     = $form->get('eventsFile')
+            $file       = $form->get('eventsFile')
                 ->getData();
-            $jsonData = file_get_contents($file);
-            $jsonData = json_decode($jsonData, true);
-            dump($jsonData);
-            die;
+            $eventsData = file_get_contents($file);
+            $eventsData = json_decode($eventsData, true);
+            try {
+                $eventFileProcessorService->processEventData($eventsData);
+                $this->addFlash('success', 'Events added successfully');
+                return $this->redirectToRoute('list_events');
+            } catch (Exception $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
         }
 
         return $this->render(
