@@ -18,13 +18,13 @@ class EventDetails
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Employee::class, inversedBy="eventDetails")
+     * @ORM\ManyToOne(targetEntity=Employee::class, inversedBy="eventDetails", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $employee;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="eventDetails")
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="eventDetails", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $event;

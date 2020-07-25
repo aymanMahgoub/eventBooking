@@ -8,4 +8,61 @@
             {{ message }}
         </div>
     {% endfor %}
+    <div class="row-fluid">
+        <div class="col-md-12">
+            <div class='span12 box bordered-box orange-border'>
+                <div class='box-header blue-background'>
+                    <h2 class='title'>Events</h2>
+                </div>
+                <div class='box-content box-no-padding'>
+                    <div class='responsive-table'>
+                        <div class='scrollable-area'>
+                            <table id="cities_table" class='table table-bordered table-striped'>
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Employee Name
+                                    </th>
+                                    <th>
+                                        Employee Mail
+                                    </th>
+                                    <th>
+                                        Event Name
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Fee
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in events %}
+                                    <tr>
+                                        <td>
+                                            {{ event.employee.name }}
+                                        </td>
+                                        <td>
+                                            {{ event.employee.email }}
+                                        </td>
+                                        <td>
+                                            {{ event.event.name }}
+                                        </td>
+                                        <td>
+                                            {{ event.date|date("Y-m-d") }}
+                                        </td>
+                                        <td>
+                                            {{ event.fee }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
