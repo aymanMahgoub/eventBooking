@@ -25,11 +25,13 @@ final class Version20200725070533 extends AbstractMigration
         $this->addSql('CREATE TABLE event_details (id INT AUTO_INCREMENT NOT NULL, employee_id INT NOT NULL, event_id INT NOT NULL, fee DOUBLE PRECISION NOT NULL, date DATE NOT NULL, INDEX IDX_F771A2258C03F15C (employee_id), INDEX IDX_F771A22571F7E88B (event_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE event_details ADD CONSTRAINT FK_F771A2258C03F15C FOREIGN KEY (employee_id) REFERENCES employee (id)');
         $this->addSql('ALTER TABLE event_details ADD CONSTRAINT FK_F771A22571F7E88B FOREIGN KEY (event_id) REFERENCES event (id)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_5D9F75A1E7927C74 ON employee (email)');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('DROP INDEX UNIQ_5D9F75A1E7927C74 ON employee');
         $this->addSql('ALTER TABLE event_details DROP FOREIGN KEY FK_F771A2258C03F15C');
         $this->addSql('ALTER TABLE event_details DROP FOREIGN KEY FK_F771A22571F7E88B');
         $this->addSql('DROP TABLE employee');
