@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\EventDetails;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +21,16 @@ class EventDetailsRepository extends ServiceEntityRepository
         parent::__construct($registry, EventDetails::class);
     }
 
-    // /**
-    //  * @return EventDetails[] Returns an array of EventDetails objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param EventDetails $eventDetails
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(EventDetails $eventDetails)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($eventDetails);
+        $this->_em->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?EventDetails
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
