@@ -8,6 +8,28 @@
             {{ message }}
         </div>
     {% endfor %}
+    <div class="form-group">
+        {{ form_start(form) }}
+        <div class="form-control">
+            {{ form_label(form.employeeName) }}
+            {{ form_widget(form.employeeName, { 'attr': {'placeholder': 'Employee Name'} }) }}
+            {{ form_label(form.eventName) }}
+            {{ form_widget(form.eventName, { 'attr': {'placeholder': 'Event Name'} }) }}
+        </div>
+        <br>
+        <div style="display: flex">
+            &nbsp;
+            {{ form_label(form.fromDate) }}
+            {{ form_widget(form.fromDate) }}
+            &nbsp;
+            {{ form_label(form.toDate) }}
+            {{ form_widget(form.toDate) }}
+            &nbsp;
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
     <div class="row-fluid">
         <div class="col-md-12">
             <div class='span12 box bordered-box orange-border'>
@@ -63,16 +85,16 @@
                             </table>
                             <div>
 
-                            <div style="float: right">
+                                <div style="float: right">
                                 <span class="border" style="padding: 20px">
                                         Total {{ totalPrice }}
                                 </span>
-                            </div>
+                                </div>
                                 <br>
-                            <div class="pagination justify-content-center">
-                                {{ knp_pagination_render(events) }}
+                                <div class="pagination justify-content-center">
+                                    {{ knp_pagination_render(events) }}
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>

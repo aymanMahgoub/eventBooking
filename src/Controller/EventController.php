@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\EventFileType;
+use App\Form\EventSearchType;
 use App\Repository\EventDetailsRepository;
 use App\Services\EventFileProcessorService;
 use Exception;
@@ -28,19 +29,28 @@ class EventController extends AbstractController
         EventDetailsRepository $eventDetailsRepository,
         PaginatorInterface $paginator
     ) {
-        $events = $eventDetailsRepository->findAll();
-
-        $limit          = $request->query->get('limit', 5);
-        $page           = $request->query->get('page', 1);
+        $searchForm = $this->createForm(
+            EventSearchType::class,
+            null,
+            [
+                'action' => $this->generateUrl('upload_events'),
+                'method' => 'POST',
+            ]
+        );
+        $events     = $eventDetailsRepository->findAll();
+        $limit      = $request->query->get('limit', 5);
+        $page       = $request->query->get('page', 1);
         $events     = $paginator->paginate(
             $events,
             $page,
             $limit
         );
+
         return $this->render(
             'event/index.html.twig',
             [
                 'events' => $events,
+                'form'   => $searchForm->createView(),
             ]
         );
     }
@@ -73,6 +83,7 @@ class EventController extends AbstractController
             try {
                 $eventFileProcessorService->processEventData($eventsData);
                 $this->addFlash('success', 'Events added successfully');
+
                 return $this->redirectToRoute('list_events');
             } catch (Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
