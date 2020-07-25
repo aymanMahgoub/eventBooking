@@ -38,6 +38,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% set totalPrice = 0 %}
                                 {% for event in events %}
                                     <tr>
                                         <td>
@@ -56,9 +57,15 @@
                                             {{ event.fee }}
                                         </td>
                                     </tr>
+                                    {% set totalPrice = totalPrice + event.fee %}
                                 {% endfor %}
                                 </tbody>
                             </table>
+                            <div style="float: right">
+                                <span class="border" style="padding: 20px">
+                                        Total {{ totalPrice }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
