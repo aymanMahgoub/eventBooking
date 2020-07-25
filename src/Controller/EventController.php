@@ -33,8 +33,8 @@ class EventController extends AbstractController
             EventSearchType::class,
             null,
             [
-                'action' => $this->generateUrl('upload_events'),
-                'method' => 'POST',
+                'action' => $this->generateUrl('search_events'),
+                'method' => 'GET',
             ]
         );
         $events     = $eventDetailsRepository->findAll();
@@ -53,6 +53,58 @@ class EventController extends AbstractController
                 'form'   => $searchForm->createView(),
             ]
         );
+    }
+
+    /**
+     * @param Request                $request
+     * @param EventDetailsRepository $eventDetailsRepository
+     * @param PaginatorInterface     $paginator
+     *
+     * @return Response
+     * @Route("/serach", name="search_events")
+     */
+    public function searchAction(
+        Request $request,
+        EventDetailsRepository $eventDetailsRepository,
+        PaginatorInterface $paginator
+    ) {
+        $searchForm = $this->createForm(
+            EventSearchType::class,
+            null,
+            [
+                'action' => $this->generateUrl('search_events'),
+                'method' => 'GET',
+            ]
+        );
+        $searchForm->handleRequest($request);
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $events = $eventDetailsRepository->search(
+                [
+                    'employeeName' => $searchForm->get('employeeName')->getData(),
+                    'eventName'    => $searchForm->get('eventName')->getData(),
+                    'fromDate'     => $searchForm->get('fromDate')->getData(),
+                    'toDate'       => $searchForm->get('toDate')->getData(),
+                ]
+            );
+            $limit  = $request->query->get('limit', 5);
+            $page   = $request->query->get('page', 1);
+            $events = $paginator->paginate(
+                $events,
+                $page,
+                $limit
+            );
+
+            return $this->render(
+                'event/index.html.twig',
+                [
+                    'events' => $events,
+                    'form'   => $searchForm->createView(),
+                ]
+            );
+        }
+
+        return $this->redirectToRoute('list_events');
+
     }
 
     /**
@@ -76,8 +128,7 @@ class EventController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var File $file */
-            $file       = $form->get('eventsFile')
-                ->getData();
+            $file       = $form->get('eventsFile')->getData();
             $eventsData = file_get_contents($file);
             $eventsData = json_decode($eventsData, true);
             try {
