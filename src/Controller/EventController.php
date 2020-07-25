@@ -6,6 +6,7 @@ use App\Form\EventFileType;
 use App\Repository\EventDetailsRepository;
 use App\Services\EventFileProcessorService;
 use Exception;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,26 @@ class EventController extends AbstractController
 {
     /**
      * @Route("/event", name="list_events")
+     * @param Request                $request
+     * @param EventDetailsRepository $eventDetailsRepository
+     * @param PaginatorInterface     $paginator
+     *
+     * @return Response
      */
-    public function index(EventDetailsRepository $eventDetailsRepository)
-    {
+    public function index(
+        Request $request,
+        EventDetailsRepository $eventDetailsRepository,
+        PaginatorInterface $paginator
+    ) {
         $events = $eventDetailsRepository->findAll();
+
+        $limit          = $request->query->get('limit', 5);
+        $page           = $request->query->get('page', 1);
+        $events     = $paginator->paginate(
+            $events,
+            $page,
+            $limit
+        );
         return $this->render(
             'event/index.html.twig',
             [

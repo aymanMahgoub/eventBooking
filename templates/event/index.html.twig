@@ -61,11 +61,18 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
+                            <div>
+
                             <div style="float: right">
                                 <span class="border" style="padding: 20px">
                                         Total {{ totalPrice }}
                                 </span>
                             </div>
+                                <br>
+                            <div class="pagination justify-content-center">
+                                {{ knp_pagination_render(events) }}
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
