@@ -12,25 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class EventController extends AbstractController
 {
     /**
-     * @Route("/event", name="event")
+     * @Route("/event", name="list_events")
      */
     public function index()
     {
-        $form = $this->createForm(
-            EventFileType::class,
-            null,
-            [
-                'action' => $this->generateUrl('upload_events'),
-                'method' => 'POST',
-            ]
-        );
-
         return $this->render(
-            'event/index.html.twig',
-            [
-                'controller_name' => 'EventController',
-                'form'            => $form->createView(),
-            ]
+            'event/index.html.twig'
         );
     }
 
@@ -61,7 +48,12 @@ class EventController extends AbstractController
             die;
         }
 
-        return $this->redirectToRoute('event');
+        return $this->render(
+            'event/upload.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
 }
